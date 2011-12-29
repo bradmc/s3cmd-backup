@@ -8,13 +8,26 @@ use XML::Simple;
 
 	my $config = XMLin(
 		'./s3cmd_backup.conf',
-		ForceArray      => ['backup', 'directory'],
-		KeepRoot	    => 1
+		ForceArray      => ['backup', 'directory']
 	);
 
+	my $s3cmd = $config->{config}->{s3cmd} || '/usr/local/s3cmd';
 
+use Data::Dumper;
+print Dumper($config);
 
+	my @commands;
+	foreach my $backup (@{$config->{backup}}) {
+		my $s3_config_file = trim($backup->{s3_config_file});
+		my $source = trim($backup->{source});
+		my $destination = trim($backup->{destination});
+		my $params = trim($backup->{params});
+		foreach my $dir (@{$config->{$backup}->{directory}}) {
+			print "$dir\n";
+		}
 
+#		my $ = trim($backup->{});
+	}
 
 
 
@@ -22,3 +35,12 @@ use XML::Simple;
 print "\nokay\n";
 
 
+
+
+# ------------------------------------------------------
+
+sub trim {
+	my $val = shift;
+	for ($val) { s/^\w+//; s/\w+$//; }
+	return
+}

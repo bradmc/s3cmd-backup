@@ -8,17 +8,19 @@
 
 	my $config = XMLin(
 		'./s3cmd_backup.conf',
-		ForceArray      => ['backup', 'directory']
+		ForceArray => ['backup', 'directory']
 	);
 
 	my $s3cmd = trim($config->{config}->{s3cmd}) || '/usr/bin/s3cmd';
 	my $s3_config_file = trim($config->{config}->{s3_config_file}) || '~/.s3cfg';
 	my $global_params = trim($config->{config}->{params}) || '';
-
-# use Data::Dumper;
-# print Dumper($config);
+	my $mail_path = trim($config->{config}->{mail_path}) || '/usr/bin/mail';
+	my $email_address = trim($config->{config}->{email_address}) || '';
+	my $email_subject = trim($config->{config}->{email_subject}) || 's3cmd Backup';
+	my $temp_file = trim($config->{config}->{temp_file}) || '/tmp/s3cmd_backup.log';
 
 	# build commands
+	#
 	my @commands;
 	foreach my $backup (@{$config->{backup}}) {
 		my $source = trim($backup->{source});
@@ -26,18 +28,34 @@
 		my $params = trim($backup->{params});
 		foreach my $dir (@{$backup->{directory}}) {
 			my $dir_params = trim($dir->{params}) if $dir->{params};
-			my $dir_path = trim($dir->{path}) if $dir->{path};
-			my $cmd = "$s3cmd -c $s3_config_file $global_params $dir_params ";
+			my $dir_path = trim($dir->{path}) . '/';
+			$dir_path =~ s/\/{2,}$/\//s;
+			my $cmd = "$s3cmd sync -c $s3_config_file $global_params $dir_params ";
 			$cmd .= "$source/$dir_path $destination/$dir_path ";
-			push @commands, $cmd;
+			push @commands, { command => $cmd, caption => "From: $source/$dir_path\nTo: $destination/$dir_path" };
 		}
 	}
 
 	# exec commands
+	#
+	open LOG, ">$temp_file"; print LOG "s3cmd Backup...\n"; close LOG;
 	foreach my $command (@commands) {
-		print "$command\n\n";
+		my $log = '';
+		$log .= "\n" . '-' x 40 . "\n";
+		$log .= "$command->{caption}";
+		$log .= "\n" . '-' x 40 . "\n";
+		# print "$command\n\n";
+		open C, "$command->{command} 2>/dev/null |";
+		while (<C>) { $log .= $_ }
+		close C;
+		open LOG, ">>$temp_file"; print LOG $log; close LOG;
 	}
 
+	# email the log
+	#
+	if ($email_address) {
+		system "cat $temp_file | $mail_path -s \"$email_subject\" $email_address";
+	}
 
 
 # ------------------------------------------------------

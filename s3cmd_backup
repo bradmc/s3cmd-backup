@@ -1,0 +1,24 @@
+#!/usr/bin/perl
+
+# On debain, you can get XML::Simple  with:
+# apt-get install libxml-simple-perl
+
+use strict;
+use XML::Simple;
+
+	my $config = XMLin(
+		'./s3cmd_backup.conf',
+		ForceArray      => ['backup', 'directory'],
+		KeepRoot	    => 1
+	);
+
+
+
+
+
+
+
+
+print "\nokay\n";
+
+

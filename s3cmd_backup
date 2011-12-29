@@ -1,39 +1,42 @@
 #!/usr/bin/perl
 
-# On debain, you can get XML::Simple  with:
+# On debian distros, you can get XML::Simple with:
 # apt-get install libxml-simple-perl
 
-use strict;
-use XML::Simple;
+	use strict;
+	use XML::Simple;
 
 	my $config = XMLin(
 		'./s3cmd_backup.conf',
 		ForceArray      => ['backup', 'directory']
 	);
 
-	my $s3cmd = $config->{config}->{s3cmd} || '/usr/local/s3cmd';
+	my $s3cmd = trim($config->{config}->{s3cmd}) || '/usr/bin/s3cmd';
+	my $s3_config_file = trim($config->{config}->{s3_config_file}) || '~/.s3cfg';
+	my $global_params = trim($config->{config}->{params}) || '';
 
-use Data::Dumper;
-print Dumper($config);
+# use Data::Dumper;
+# print Dumper($config);
 
+	# build commands
 	my @commands;
 	foreach my $backup (@{$config->{backup}}) {
-		my $s3_config_file = trim($backup->{s3_config_file});
 		my $source = trim($backup->{source});
 		my $destination = trim($backup->{destination});
 		my $params = trim($backup->{params});
-		foreach my $dir (@{$config->{$backup}->{directory}}) {
-			print "$dir\n";
+		foreach my $dir (@{$backup->{directory}}) {
+			my $dir_params = trim($dir->{params}) if $dir->{params};
+			my $dir_path = trim($dir->{path}) if $dir->{path};
+			my $cmd = "$s3cmd -c $s3_config_file $global_params $dir_params ";
+			$cmd .= "$source/$dir_path $destination/$dir_path ";
+			push @commands, $cmd;
 		}
-
-#		my $ = trim($backup->{});
 	}
 
-
-
-
-print "\nokay\n";
-
+	# exec commands
+	foreach my $command (@commands) {
+		print "$command\n\n";
+	}
 
 
 
@@ -41,6 +44,8 @@ print "\nokay\n";
 
 sub trim {
 	my $val = shift;
-	for ($val) { s/^\w+//; s/\w+$//; }
-	return
+	for ($val) { s/^\s+//; s/\s+$//; }
+	return $val;
 }
+
+

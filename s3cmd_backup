@@ -23,7 +23,7 @@
 	#
 	my @commands;
 	foreach my $backup (@{$config->{backup}}) {
-		my $source = trim($backup->{source});
+		my $source = trim($backup->{source}); $source = '' if $source eq '/';
 		my $destination = trim($backup->{destination});
 		my $params = trim($backup->{params});
 		foreach my $dir (@{$backup->{directory}}) {

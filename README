@@ -10,3 +10,13 @@ the config file format fairly generic.
 See s3cmd_backup.conf.example in this root directory for the format of
 the XML config file.
 
+----------------------------------------------------------------------
+HISTORY
+
+1.0.0     2012-01-03 Tue
+          Put into production on my home server.
+
+----------------------------------------------------------------------
+
+
+

@@ -6,8 +6,22 @@
 	use strict;
 	use XML::Simple;
 
+	my $s3cmd_xml;
+	if (-e './s3cmd_backup.conf') {
+		$s3cmd_xml = './s3cmd_backup.conf';
+	}
+	elsif (-e '~/.s3cmd_backup.conf') {
+		$s3cmd_xml = '~/.s3cmd_backup.conf';
+	}
+	elsif (-e '/etc/s3cmd_backup.conf') {
+		$s3cmd_xml = '/etc/s3cmd_backup.conf';
+	}
+	else {
+		die "Could not find xml configuration file.";
+	}
+
 	my $config = XMLin(
-		'./s3cmd_backup.conf',
+		$s3cmd_xml,
 		ForceArray => ['backup', 'directory']
 	);
 

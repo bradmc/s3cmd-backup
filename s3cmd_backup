@@ -5,6 +5,7 @@
 
 	use strict;
 	use XML::Simple;
+	use POSIX qw/strftime/;
 
 	my $s3cmd_xml;
 	if (-e './s3cmd_backup.conf') {
@@ -13,7 +14,7 @@
 	elsif (-e '~/.s3cmd_backup.conf') {
 		$s3cmd_xml = '~/.s3cmd_backup.conf';
 	}
-	elsif (-e '/etc/s3cmd_backup.conf') {
+	elsif (-e "/etc/s3cmd_backup.conf") {
 		$s3cmd_xml = '/etc/s3cmd_backup.conf';
 	}
 	else {
@@ -52,7 +53,9 @@
 
 	# exec commands
 	#
-	open LOG, ">$temp_file"; print LOG "s3cmd Backup...\n"; close LOG;
+	open LOG, ">$temp_file";
+	print LOG "s3cmd Backup...\n\n";
+	print LOG "Started at: " . strftime('%F %r',localtime) . "\n";
 	foreach my $command (@commands) {
 		my $log = '';
 		$log .= "\n" . '-' x 40 . "\n";
@@ -62,8 +65,10 @@
 		open C, "$command->{command} 2>/dev/null |";
 		while (<C>) { $log .= $_ }
 		close C;
-		open LOG, ">>$temp_file"; print LOG $log; close LOG;
+		print LOG $log;
 	}
+	print LOG "\n" . '-' x 40 . "\n";
+	print LOG "Ended at: " . strftime('%F %r',localtime) . "\n\n";
 
 	# email the log
 	#

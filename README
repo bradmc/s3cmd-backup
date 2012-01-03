@@ -2,35 +2,11 @@ This is just a quick script I wrote to wrap the s3cmd sync command
 in a script I could use with a configuration file, rather than doing
 each directory line by line.
 
-I'm not thrilled with the XML format, and would rather use an Apache
-style config, or something generally more legible.
+I'm not thrilled with the XML config format, and would rather use an
+Apache style config, or something generally more legible. Although
+I'm thinking about rewriting it in Python, so it would be nice to keep
+the config file format fairly generic.
 
-Example XML format of s3cmd_backup.conf
-
-<s3cmd_backup>
-	<config>
-		<s3cmd> /usr/bin/trickle -u 64 /usr/bin/s3cmd </s3cmd>
-		<s3_config_file> /home/fred/.s3cfg </s3_config_file>
-		<params> -rH --no-check-md5 --exclude ".DS_Store" </params>
-		<email_subject> s3 Backup - My Backup </email_subject>
-		<email_address> fred@example.com </email_address>
-	</config>
-	<backup>
-		<source> /media/Files </source>
-		<destination> s3://my_bucket/dir </destination>
-		<directory>
-			<path> files/Videos </path>
-		</directory>
-		<directory>
-			<path> files/Music </path>
-			<params> --exclude '*.wav' </params>
-		</directory>
-	</backup>
-	<backup>
-	...
-	</backup>
-	<backup>
-	...
-	</backup>
-</s3cmd_backup>
+See s3cmd_backup.conf.example in this root directory for the format of
+the XML config file.
 

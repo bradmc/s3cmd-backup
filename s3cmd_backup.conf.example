@@ -1,6 +1,6 @@
 <s3cmd_backup>
 
-	<comments> -n for dry run, --deleted-removed to delete files that have been deleted </comments>
+	<comments> -n for dry run, --delete-removed to delete files that have been deleted </comments>
 
 	<config>
 		<s3cmd> /usr/bin/trickle -u 64 /usr/bin/s3cmd </s3cmd>

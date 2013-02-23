@@ -13,8 +13,13 @@ the XML config file.
 ----------------------------------------------------------------------
 HISTORY
 
+1.1.0     2013-02-22 Fri
+          - Added ability for the script to detect if it's already
+            running, using the Sys::RunAlone perl module.
+          - Fixed problem in the example config.
+
 1.0.0     2012-01-03 Tue
-          Put into production on my home server.
+          - Put into production on my home server.
 
 ----------------------------------------------------------------------
 

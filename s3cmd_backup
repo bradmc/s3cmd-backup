@@ -3,6 +3,9 @@
 # On debian distros, you can get XML::Simple with:
 # apt-get install libxml-simple-perl
 
+	# make sure it's not already running
+	use Sys::RunAlone;
+
 	use strict;
 	use XML::Simple;
 	use POSIX qw/strftime/;
@@ -85,4 +88,8 @@ sub trim {
 	return $val;
 }
 
+# ------------------------------------------------------
+
+# needed for Sys::RunAlone
+__END__
 

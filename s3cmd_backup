@@ -1,5 +1,7 @@
 #!/usr/bin/perl
 
+# v1.1.0
+#
 # On debian distros, you can get XML::Simple with:
 # apt-get install libxml-simple-perl
 
